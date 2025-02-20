@@ -1,0 +1,36 @@
+syntax = "proto3";
+package pb;
+option go_package = "internal/pb";
+
+message Person {
+    string id = 1;
+    string name = 2;
+    int32 year = 3;
+}
+
+message Profession {
+    string id = 1;
+    string description = 2;
+}
+
+message CreatePersonRequest {
+    string name = 1;
+    int32 year = 2;
+}
+
+message PersonResponse {
+    Person person = 1;
+}
+
+message CreateProfessionRequest {
+    string description = 1;
+}
+
+message ProfessionResponse {
+    Profession profession = 1;
+}
+
+service PersonService {
+    rpc CreatePerson(CreatePersonRequest) returns (PersonResponse) {}
+    rpc CreateProfession(CreateProfessionRequest) returns (ProfessionResponse) {}
+}
