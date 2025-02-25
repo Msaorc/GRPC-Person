@@ -2,11 +2,13 @@ package main
 
 import (
 	"database/sql"
+	"net"
 
 	"github.com/Msaorc/GRPC-Person/internal/database"
 	"github.com/Msaorc/GRPC-Person/internal/pb"
 	"github.com/Msaorc/GRPC-Person/internal/service"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 func main() {
@@ -22,6 +24,16 @@ func main() {
 	professionService := service.NewProfessionService(*professionDB)
 
 	grpcServer := grpc.NewServer()
+	reflection.Register(grpcServer)
 	pb.RegisterPersonServiceServer(grpcServer, personService)
 	pb.RegisterPersonServiceServer(grpcServer, professionService)
+
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		panic(err)
+	}
+
+	if err := grpcServer.Serve(lis); err != nil {
+		panic(err)
+	}
 }
