@@ -8,7 +8,7 @@ import (
 )
 
 type ProfessionService struct {
-	pb.UnimplementedPersonServiceServer
+	pb.UnimplementedProfessionServiceServer
 	ProfessionDB database.Profession
 }
 

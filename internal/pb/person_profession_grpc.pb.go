@@ -19,8 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PersonService_CreatePerson_FullMethodName     = "/pb.PersonService/CreatePerson"
-	PersonService_CreateProfession_FullMethodName = "/pb.PersonService/CreateProfession"
+	PersonService_CreatePerson_FullMethodName = "/pb.PersonService/CreatePerson"
 )
 
 // PersonServiceClient is the client API for PersonService service.
@@ -28,7 +27,6 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PersonServiceClient interface {
 	CreatePerson(ctx context.Context, in *CreatePersonRequest, opts ...grpc.CallOption) (*PersonResponse, error)
-	CreateProfession(ctx context.Context, in *CreateProfessionRequest, opts ...grpc.CallOption) (*ProfessionResponse, error)
 }
 
 type personServiceClient struct {
@@ -49,22 +47,11 @@ func (c *personServiceClient) CreatePerson(ctx context.Context, in *CreatePerson
 	return out, nil
 }
 
-func (c *personServiceClient) CreateProfession(ctx context.Context, in *CreateProfessionRequest, opts ...grpc.CallOption) (*ProfessionResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ProfessionResponse)
-	err := c.cc.Invoke(ctx, PersonService_CreateProfession_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PersonServiceServer is the server API for PersonService service.
 // All implementations must embed UnimplementedPersonServiceServer
 // for forward compatibility.
 type PersonServiceServer interface {
 	CreatePerson(context.Context, *CreatePersonRequest) (*PersonResponse, error)
-	CreateProfession(context.Context, *CreateProfessionRequest) (*ProfessionResponse, error)
 	mustEmbedUnimplementedPersonServiceServer()
 }
 
@@ -77,9 +64,6 @@ type UnimplementedPersonServiceServer struct{}
 
 func (UnimplementedPersonServiceServer) CreatePerson(context.Context, *CreatePersonRequest) (*PersonResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePerson not implemented")
-}
-func (UnimplementedPersonServiceServer) CreateProfession(context.Context, *CreateProfessionRequest) (*ProfessionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateProfession not implemented")
 }
 func (UnimplementedPersonServiceServer) mustEmbedUnimplementedPersonServiceServer() {}
 func (UnimplementedPersonServiceServer) testEmbeddedByValue()                       {}
@@ -120,24 +104,6 @@ func _PersonService_CreatePerson_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PersonService_CreateProfession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateProfessionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PersonServiceServer).CreateProfession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PersonService_CreateProfession_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PersonServiceServer).CreateProfession(ctx, req.(*CreateProfessionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // PersonService_ServiceDesc is the grpc.ServiceDesc for PersonService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -149,9 +115,107 @@ var PersonService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "CreatePerson",
 			Handler:    _PersonService_CreatePerson_Handler,
 		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "proto/person_profession.proto",
+}
+
+const (
+	ProfessionService_CreateProfession_FullMethodName = "/pb.ProfessionService/CreateProfession"
+)
+
+// ProfessionServiceClient is the client API for ProfessionService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ProfessionServiceClient interface {
+	CreateProfession(ctx context.Context, in *CreateProfessionRequest, opts ...grpc.CallOption) (*ProfessionResponse, error)
+}
+
+type professionServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewProfessionServiceClient(cc grpc.ClientConnInterface) ProfessionServiceClient {
+	return &professionServiceClient{cc}
+}
+
+func (c *professionServiceClient) CreateProfession(ctx context.Context, in *CreateProfessionRequest, opts ...grpc.CallOption) (*ProfessionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProfessionResponse)
+	err := c.cc.Invoke(ctx, ProfessionService_CreateProfession_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ProfessionServiceServer is the server API for ProfessionService service.
+// All implementations must embed UnimplementedProfessionServiceServer
+// for forward compatibility.
+type ProfessionServiceServer interface {
+	CreateProfession(context.Context, *CreateProfessionRequest) (*ProfessionResponse, error)
+	mustEmbedUnimplementedProfessionServiceServer()
+}
+
+// UnimplementedProfessionServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedProfessionServiceServer struct{}
+
+func (UnimplementedProfessionServiceServer) CreateProfession(context.Context, *CreateProfessionRequest) (*ProfessionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateProfession not implemented")
+}
+func (UnimplementedProfessionServiceServer) mustEmbedUnimplementedProfessionServiceServer() {}
+func (UnimplementedProfessionServiceServer) testEmbeddedByValue()                           {}
+
+// UnsafeProfessionServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ProfessionServiceServer will
+// result in compilation errors.
+type UnsafeProfessionServiceServer interface {
+	mustEmbedUnimplementedProfessionServiceServer()
+}
+
+func RegisterProfessionServiceServer(s grpc.ServiceRegistrar, srv ProfessionServiceServer) {
+	// If the following call pancis, it indicates UnimplementedProfessionServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ProfessionService_ServiceDesc, srv)
+}
+
+func _ProfessionService_CreateProfession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateProfessionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProfessionServiceServer).CreateProfession(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProfessionService_CreateProfession_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProfessionServiceServer).CreateProfession(ctx, req.(*CreateProfessionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ProfessionService_ServiceDesc is the grpc.ServiceDesc for ProfessionService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ProfessionService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.ProfessionService",
+	HandlerType: (*ProfessionServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateProfession",
-			Handler:    _PersonService_CreateProfession_Handler,
+			Handler:    _ProfessionService_CreateProfession_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

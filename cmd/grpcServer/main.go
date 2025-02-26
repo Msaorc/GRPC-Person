@@ -7,6 +7,7 @@ import (
 	"github.com/Msaorc/GRPC-Person/internal/database"
 	"github.com/Msaorc/GRPC-Person/internal/pb"
 	"github.com/Msaorc/GRPC-Person/internal/service"
+	_ "github.com/mattn/go-sqlite3"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -26,7 +27,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
 	pb.RegisterPersonServiceServer(grpcServer, personService)
-	pb.RegisterPersonServiceServer(grpcServer, professionService)
+	pb.RegisterProfessionServiceServer(grpcServer, professionService)
 
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {

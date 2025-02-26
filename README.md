@@ -6,6 +6,10 @@
 
 * https://grpc.io/docs/languages/go/quickstart/
 
+## Instalação do evans:
+
+`go install github.com/ktr0731/evans@latest`
+
 ## Técnologias utilizadas:
 
 * **Banco de dados:** SQlite
