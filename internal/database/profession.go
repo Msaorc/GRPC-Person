@@ -12,7 +12,7 @@ type Profession struct {
 	Description string
 }
 
-const sqlInsertProfession = "INSERT INTO profession (id, description) VALUES ($1,$2,$3)"
+const sqlInsertProfession = "INSERT INTO profession (id, description) VALUES ($1,$2)"
 
 func NewProfession(db *sql.DB) *Profession {
 	return &Profession{db: db}
