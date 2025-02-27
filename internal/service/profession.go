@@ -18,16 +18,14 @@ func NewProfessionService(professionDB database.Profession) *ProfessionService {
 	}
 }
 
-func (pf *ProfessionService) CreateProfession(ctx context.Context, in *pb.CreateProfessionRequest) (*pb.ProfessionResponse, error) {
+func (pf *ProfessionService) CreateProfession(ctx context.Context, in *pb.CreateProfessionRequest) (*pb.Profession, error) {
 	profession, err := pf.ProfessionDB.Create(in.Description)
 	if err != nil {
 		return nil, err
 	}
 
-	professionResponse := &pb.Profession{
+	return &pb.Profession{
 		Id:          profession.ID,
 		Description: profession.Description,
-	}
-
-	return &pb.ProfessionResponse{Profession: professionResponse}, nil
+	}, nil
 }

@@ -18,16 +18,15 @@ func NewPersonService(personDB database.Person) *PersonService {
 	}
 }
 
-func (p *PersonService) CreatePerson(ctx context.Context, in *pb.CreatePersonRequest) (*pb.PersonResponse, error) {
+func (p *PersonService) CreatePerson(ctx context.Context, in *pb.CreatePersonRequest) (*pb.Person, error) {
 	person, err := p.PersonDB.Create(in.Name, in.Year)
 	if err != nil {
 		return nil, err
 	}
 
-	personResponse := &pb.Person{
+	return &pb.Person{
 		Id:   person.ID,
 		Name: person.Name,
 		Year: person.Year,
-	}
-	return &pb.PersonResponse{Person: personResponse}, nil
+	}, nil
 }

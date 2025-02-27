@@ -31,9 +31,9 @@ message ProfessionResponse {
 }
 
 service PersonService {
-    rpc CreatePerson(CreatePersonRequest) returns (PersonResponse) {}
+    rpc CreatePerson(CreatePersonRequest) returns (Person) {}
 }
 
 service ProfessionService {
-    rpc CreateProfession(CreateProfessionRequest) returns (ProfessionResponse) {}
+    rpc CreateProfession(CreateProfessionRequest) returns (Profession) {}
 }

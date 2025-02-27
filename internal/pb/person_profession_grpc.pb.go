@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PersonServiceClient interface {
-	CreatePerson(ctx context.Context, in *CreatePersonRequest, opts ...grpc.CallOption) (*PersonResponse, error)
+	CreatePerson(ctx context.Context, in *CreatePersonRequest, opts ...grpc.CallOption) (*Person, error)
 }
 
 type personServiceClient struct {
@@ -37,9 +37,9 @@ func NewPersonServiceClient(cc grpc.ClientConnInterface) PersonServiceClient {
 	return &personServiceClient{cc}
 }
 
-func (c *personServiceClient) CreatePerson(ctx context.Context, in *CreatePersonRequest, opts ...grpc.CallOption) (*PersonResponse, error) {
+func (c *personServiceClient) CreatePerson(ctx context.Context, in *CreatePersonRequest, opts ...grpc.CallOption) (*Person, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PersonResponse)
+	out := new(Person)
 	err := c.cc.Invoke(ctx, PersonService_CreatePerson_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (c *personServiceClient) CreatePerson(ctx context.Context, in *CreatePerson
 // All implementations must embed UnimplementedPersonServiceServer
 // for forward compatibility.
 type PersonServiceServer interface {
-	CreatePerson(context.Context, *CreatePersonRequest) (*PersonResponse, error)
+	CreatePerson(context.Context, *CreatePersonRequest) (*Person, error)
 	mustEmbedUnimplementedPersonServiceServer()
 }
 
@@ -62,7 +62,7 @@ type PersonServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPersonServiceServer struct{}
 
-func (UnimplementedPersonServiceServer) CreatePerson(context.Context, *CreatePersonRequest) (*PersonResponse, error) {
+func (UnimplementedPersonServiceServer) CreatePerson(context.Context, *CreatePersonRequest) (*Person, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePerson not implemented")
 }
 func (UnimplementedPersonServiceServer) mustEmbedUnimplementedPersonServiceServer() {}
@@ -128,7 +128,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProfessionServiceClient interface {
-	CreateProfession(ctx context.Context, in *CreateProfessionRequest, opts ...grpc.CallOption) (*ProfessionResponse, error)
+	CreateProfession(ctx context.Context, in *CreateProfessionRequest, opts ...grpc.CallOption) (*Profession, error)
 }
 
 type professionServiceClient struct {
@@ -139,9 +139,9 @@ func NewProfessionServiceClient(cc grpc.ClientConnInterface) ProfessionServiceCl
 	return &professionServiceClient{cc}
 }
 
-func (c *professionServiceClient) CreateProfession(ctx context.Context, in *CreateProfessionRequest, opts ...grpc.CallOption) (*ProfessionResponse, error) {
+func (c *professionServiceClient) CreateProfession(ctx context.Context, in *CreateProfessionRequest, opts ...grpc.CallOption) (*Profession, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ProfessionResponse)
+	out := new(Profession)
 	err := c.cc.Invoke(ctx, ProfessionService_CreateProfession_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -153,7 +153,7 @@ func (c *professionServiceClient) CreateProfession(ctx context.Context, in *Crea
 // All implementations must embed UnimplementedProfessionServiceServer
 // for forward compatibility.
 type ProfessionServiceServer interface {
-	CreateProfession(context.Context, *CreateProfessionRequest) (*ProfessionResponse, error)
+	CreateProfession(context.Context, *CreateProfessionRequest) (*Profession, error)
 	mustEmbedUnimplementedProfessionServiceServer()
 }
 
@@ -164,7 +164,7 @@ type ProfessionServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedProfessionServiceServer struct{}
 
-func (UnimplementedProfessionServiceServer) CreateProfession(context.Context, *CreateProfessionRequest) (*ProfessionResponse, error) {
+func (UnimplementedProfessionServiceServer) CreateProfession(context.Context, *CreateProfessionRequest) (*Profession, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProfession not implemented")
 }
 func (UnimplementedProfessionServiceServer) mustEmbedUnimplementedProfessionServiceServer() {}
