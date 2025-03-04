@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	PersonService_CreatePerson_FullMethodName = "/pb.PersonService/CreatePerson"
 	PersonService_ListPerson_FullMethodName   = "/pb.PersonService/ListPerson"
+	PersonService_GetPerson_FullMethodName    = "/pb.PersonService/GetPerson"
 )
 
 // PersonServiceClient is the client API for PersonService service.
@@ -29,6 +30,7 @@ const (
 type PersonServiceClient interface {
 	CreatePerson(ctx context.Context, in *CreatePersonRequest, opts ...grpc.CallOption) (*Person, error)
 	ListPerson(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*PersonList, error)
+	GetPerson(ctx context.Context, in *PersonGetRequest, opts ...grpc.CallOption) (*Person, error)
 }
 
 type personServiceClient struct {
@@ -59,12 +61,23 @@ func (c *personServiceClient) ListPerson(ctx context.Context, in *Blank, opts ..
 	return out, nil
 }
 
+func (c *personServiceClient) GetPerson(ctx context.Context, in *PersonGetRequest, opts ...grpc.CallOption) (*Person, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Person)
+	err := c.cc.Invoke(ctx, PersonService_GetPerson_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PersonServiceServer is the server API for PersonService service.
 // All implementations must embed UnimplementedPersonServiceServer
 // for forward compatibility.
 type PersonServiceServer interface {
 	CreatePerson(context.Context, *CreatePersonRequest) (*Person, error)
 	ListPerson(context.Context, *Blank) (*PersonList, error)
+	GetPerson(context.Context, *PersonGetRequest) (*Person, error)
 	mustEmbedUnimplementedPersonServiceServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedPersonServiceServer) CreatePerson(context.Context, *CreatePer
 }
 func (UnimplementedPersonServiceServer) ListPerson(context.Context, *Blank) (*PersonList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPerson not implemented")
+}
+func (UnimplementedPersonServiceServer) GetPerson(context.Context, *PersonGetRequest) (*Person, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPerson not implemented")
 }
 func (UnimplementedPersonServiceServer) mustEmbedUnimplementedPersonServiceServer() {}
 func (UnimplementedPersonServiceServer) testEmbeddedByValue()                       {}
@@ -138,6 +154,24 @@ func _PersonService_ListPerson_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PersonService_GetPerson_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PersonGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PersonServiceServer).GetPerson(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PersonService_GetPerson_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PersonServiceServer).GetPerson(ctx, req.(*PersonGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PersonService_ServiceDesc is the grpc.ServiceDesc for PersonService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -153,6 +187,10 @@ var PersonService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "ListPerson",
 			Handler:    _PersonService_ListPerson_Handler,
 		},
+		{
+			MethodName: "GetPerson",
+			Handler:    _PersonService_GetPerson_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/person_profession.proto",
@@ -161,6 +199,7 @@ var PersonService_ServiceDesc = grpc.ServiceDesc{
 const (
 	ProfessionService_CreateProfession_FullMethodName = "/pb.ProfessionService/CreateProfession"
 	ProfessionService_ListProfession_FullMethodName   = "/pb.ProfessionService/ListProfession"
+	ProfessionService_GetProfession_FullMethodName    = "/pb.ProfessionService/GetProfession"
 )
 
 // ProfessionServiceClient is the client API for ProfessionService service.
@@ -169,6 +208,7 @@ const (
 type ProfessionServiceClient interface {
 	CreateProfession(ctx context.Context, in *CreateProfessionRequest, opts ...grpc.CallOption) (*Profession, error)
 	ListProfession(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*ProfessionList, error)
+	GetProfession(ctx context.Context, in *ProfessionGetRequest, opts ...grpc.CallOption) (*Profession, error)
 }
 
 type professionServiceClient struct {
@@ -199,12 +239,23 @@ func (c *professionServiceClient) ListProfession(ctx context.Context, in *Blank,
 	return out, nil
 }
 
+func (c *professionServiceClient) GetProfession(ctx context.Context, in *ProfessionGetRequest, opts ...grpc.CallOption) (*Profession, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Profession)
+	err := c.cc.Invoke(ctx, ProfessionService_GetProfession_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProfessionServiceServer is the server API for ProfessionService service.
 // All implementations must embed UnimplementedProfessionServiceServer
 // for forward compatibility.
 type ProfessionServiceServer interface {
 	CreateProfession(context.Context, *CreateProfessionRequest) (*Profession, error)
 	ListProfession(context.Context, *Blank) (*ProfessionList, error)
+	GetProfession(context.Context, *ProfessionGetRequest) (*Profession, error)
 	mustEmbedUnimplementedProfessionServiceServer()
 }
 
@@ -220,6 +271,9 @@ func (UnimplementedProfessionServiceServer) CreateProfession(context.Context, *C
 }
 func (UnimplementedProfessionServiceServer) ListProfession(context.Context, *Blank) (*ProfessionList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListProfession not implemented")
+}
+func (UnimplementedProfessionServiceServer) GetProfession(context.Context, *ProfessionGetRequest) (*Profession, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProfession not implemented")
 }
 func (UnimplementedProfessionServiceServer) mustEmbedUnimplementedProfessionServiceServer() {}
 func (UnimplementedProfessionServiceServer) testEmbeddedByValue()                           {}
@@ -278,6 +332,24 @@ func _ProfessionService_ListProfession_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProfessionService_GetProfession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProfessionGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProfessionServiceServer).GetProfession(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProfessionService_GetProfession_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProfessionServiceServer).GetProfession(ctx, req.(*ProfessionGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProfessionService_ServiceDesc is the grpc.ServiceDesc for ProfessionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -292,6 +364,10 @@ var ProfessionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListProfession",
 			Handler:    _ProfessionService_ListProfession_Handler,
+		},
+		{
+			MethodName: "GetProfession",
+			Handler:    _ProfessionService_GetProfession_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

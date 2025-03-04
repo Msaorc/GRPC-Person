@@ -48,3 +48,18 @@ func (p *PersonService) ListPerson(ctx context.Context, in *pb.Blank) (*pb.Perso
 	}
 	return &pb.PersonList{People: peopleResponse}, nil
 }
+
+func (p *PersonService) GetPerson(ctx context.Context, in *pb.PersonGetRequest) (*pb.Person, error) {
+	person, err := p.PersonDB.Find(in.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	personResponse := &pb.Person{
+		Id:   person.ID,
+		Name: person.Name,
+		Year: person.Year,
+	}
+
+	return personResponse, nil
+}

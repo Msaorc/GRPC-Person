@@ -14,7 +14,8 @@ type Person struct {
 }
 
 const sqlInsertPerson = "INSERT INTO person (id, name, year) VALUES ($1,$2,$3)"
-const sqlFindAll = "SELECT id, name, year FROM person"
+const sqlFindPersonAll = "SELECT id, name, year FROM person"
+const sqlFindPersonById = "SELECT id, name, year FROM person WHERE id = $1"
 
 func NewPerson(db *sql.DB) *Person {
 	return &Person{db: db}
@@ -32,7 +33,7 @@ func (p *Person) Create(name string, year int32) (Person, error) {
 }
 
 func (p *Person) FindAll() ([]Person, error) {
-	rows, err := p.db.Query(sqlFindAll)
+	rows, err := p.db.Query(sqlFindPersonAll)
 	if err != nil {
 		return nil, err
 	}
@@ -48,4 +49,14 @@ func (p *Person) FindAll() ([]Person, error) {
 	}
 
 	return people, nil
+}
+
+func (p *Person) Find(id string) (Person, error) {
+	var idPerson, name string
+	var year int32
+	err := p.db.QueryRow(sqlFindPersonById, id).Scan(&idPerson, &name, &year)
+	if err != nil {
+		return Person{}, nil
+	}
+	return Person{ID: id, Name: name, Year: year}, nil
 }

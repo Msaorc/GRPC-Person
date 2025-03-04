@@ -40,12 +40,22 @@ message ProfessionList {
     repeated Profession professions = 1;
 }
 
+message PersonGetRequest {
+    string id = 1;
+}
+
+message ProfessionGetRequest {
+    string id = 1;
+}
+
 service PersonService {
     rpc CreatePerson(CreatePersonRequest) returns (Person) {}
     rpc ListPerson(blank) returns (PersonList) {}
+    rpc GetPerson(PersonGetRequest) returns (Person) {}
 }
 
 service ProfessionService {
     rpc CreateProfession(CreateProfessionRequest) returns (Profession) {}
     rpc ListProfession(blank) returns (ProfessionList) {}
+    rpc GetProfession(ProfessionGetRequest) returns (Profession) {}
 }
