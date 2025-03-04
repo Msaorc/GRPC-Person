@@ -2,6 +2,8 @@ syntax = "proto3";
 package pb;
 option go_package = "internal/pb";
 
+message blank {}
+
 message Person {
     string id = 1;
     string name = 2;
@@ -30,10 +32,20 @@ message ProfessionResponse {
     Profession profession = 1;
 }
 
+message PersonList {
+    repeated Person people = 1;
+}
+
+message ProfessionList {
+    repeated Profession professions = 1;
+}
+
 service PersonService {
     rpc CreatePerson(CreatePersonRequest) returns (Person) {}
+    rpc ListPerson(blank) returns (PersonList) {}
 }
 
 service ProfessionService {
     rpc CreateProfession(CreateProfessionRequest) returns (Profession) {}
+    rpc ListProfession(blank) returns (ProfessionList) {}
 }

@@ -30,3 +30,21 @@ func (p *PersonService) CreatePerson(ctx context.Context, in *pb.CreatePersonReq
 		Year: person.Year,
 	}, nil
 }
+
+func (p *PersonService) ListPerson(ctx context.Context, in *pb.Blank) (*pb.PersonList, error) {
+	peopleList, err := p.PersonDB.FindAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var peopleResponse []*pb.Person
+	for _, person := range peopleList {
+		people := &pb.Person{
+			Id:   person.ID,
+			Name: person.Name,
+			Year: person.Year,
+		}
+		peopleResponse = append(peopleResponse, people)
+	}
+	return &pb.PersonList{People: peopleResponse}, nil
+}
