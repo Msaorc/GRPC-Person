@@ -85,3 +85,29 @@ func (pf *ProfessionService) CreateProfessionStream(stream pb.ProfessionService_
 		})
 	}
 }
+
+func (pf *ProfessionService) CreateProfessionStreamBidirectional(stream pb.ProfessionService_CreateProfessionStreamBidirectionalServer) error {
+	for {
+		profession, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+
+		professionResult, err := pf.ProfessionDB.Create(profession.Description)
+		if err != nil {
+			return err
+		}
+
+		err = stream.Send(&pb.Profession{
+			Id:          professionResult.ID,
+			Description: professionResult.Description,
+		})
+
+		if err != nil {
+			return err
+		}
+	}
+}

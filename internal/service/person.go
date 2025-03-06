@@ -89,3 +89,30 @@ func (p *PersonService) CreatePersonStream(stream pb.PersonService_CreatePersonS
 		})
 	}
 }
+
+func (p *PersonService) CreatePersonStreamBidirectional(stream pb.PersonService_CreatePersonStreamBidirectionalServer) error {
+	for {
+		person, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+
+		personResult, err := p.PersonDB.Create(person.Name, person.Year)
+		if err != nil {
+			return err
+		}
+
+		err = stream.Send(&pb.Person{
+			Id:   personResult.ID,
+			Name: personResult.Name,
+			Year: personResult.Year,
+		})
+
+		if err != nil {
+			return err
+		}
+	}
+}

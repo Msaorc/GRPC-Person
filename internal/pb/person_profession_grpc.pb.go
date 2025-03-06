@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PersonService_CreatePerson_FullMethodName       = "/pb.PersonService/CreatePerson"
-	PersonService_CreatePersonStream_FullMethodName = "/pb.PersonService/CreatePersonStream"
-	PersonService_ListPerson_FullMethodName         = "/pb.PersonService/ListPerson"
-	PersonService_GetPerson_FullMethodName          = "/pb.PersonService/GetPerson"
+	PersonService_CreatePerson_FullMethodName                    = "/pb.PersonService/CreatePerson"
+	PersonService_CreatePersonStream_FullMethodName              = "/pb.PersonService/CreatePersonStream"
+	PersonService_CreatePersonStreamBidirectional_FullMethodName = "/pb.PersonService/CreatePersonStreamBidirectional"
+	PersonService_ListPerson_FullMethodName                      = "/pb.PersonService/ListPerson"
+	PersonService_GetPerson_FullMethodName                       = "/pb.PersonService/GetPerson"
 )
 
 // PersonServiceClient is the client API for PersonService service.
@@ -31,6 +32,7 @@ const (
 type PersonServiceClient interface {
 	CreatePerson(ctx context.Context, in *CreatePersonRequest, opts ...grpc.CallOption) (*Person, error)
 	CreatePersonStream(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[CreatePersonRequest, PersonList], error)
+	CreatePersonStreamBidirectional(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[CreatePersonRequest, Person], error)
 	ListPerson(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*PersonList, error)
 	GetPerson(ctx context.Context, in *PersonGetRequest, opts ...grpc.CallOption) (*Person, error)
 }
@@ -66,6 +68,19 @@ func (c *personServiceClient) CreatePersonStream(ctx context.Context, opts ...gr
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type PersonService_CreatePersonStreamClient = grpc.ClientStreamingClient[CreatePersonRequest, PersonList]
 
+func (c *personServiceClient) CreatePersonStreamBidirectional(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[CreatePersonRequest, Person], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &PersonService_ServiceDesc.Streams[1], PersonService_CreatePersonStreamBidirectional_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[CreatePersonRequest, Person]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type PersonService_CreatePersonStreamBidirectionalClient = grpc.BidiStreamingClient[CreatePersonRequest, Person]
+
 func (c *personServiceClient) ListPerson(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*PersonList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PersonList)
@@ -92,6 +107,7 @@ func (c *personServiceClient) GetPerson(ctx context.Context, in *PersonGetReques
 type PersonServiceServer interface {
 	CreatePerson(context.Context, *CreatePersonRequest) (*Person, error)
 	CreatePersonStream(grpc.ClientStreamingServer[CreatePersonRequest, PersonList]) error
+	CreatePersonStreamBidirectional(grpc.BidiStreamingServer[CreatePersonRequest, Person]) error
 	ListPerson(context.Context, *Blank) (*PersonList, error)
 	GetPerson(context.Context, *PersonGetRequest) (*Person, error)
 	mustEmbedUnimplementedPersonServiceServer()
@@ -109,6 +125,9 @@ func (UnimplementedPersonServiceServer) CreatePerson(context.Context, *CreatePer
 }
 func (UnimplementedPersonServiceServer) CreatePersonStream(grpc.ClientStreamingServer[CreatePersonRequest, PersonList]) error {
 	return status.Errorf(codes.Unimplemented, "method CreatePersonStream not implemented")
+}
+func (UnimplementedPersonServiceServer) CreatePersonStreamBidirectional(grpc.BidiStreamingServer[CreatePersonRequest, Person]) error {
+	return status.Errorf(codes.Unimplemented, "method CreatePersonStreamBidirectional not implemented")
 }
 func (UnimplementedPersonServiceServer) ListPerson(context.Context, *Blank) (*PersonList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPerson not implemented")
@@ -161,6 +180,13 @@ func _PersonService_CreatePersonStream_Handler(srv interface{}, stream grpc.Serv
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type PersonService_CreatePersonStreamServer = grpc.ClientStreamingServer[CreatePersonRequest, PersonList]
+
+func _PersonService_CreatePersonStreamBidirectional_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(PersonServiceServer).CreatePersonStreamBidirectional(&grpc.GenericServerStream[CreatePersonRequest, Person]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type PersonService_CreatePersonStreamBidirectionalServer = grpc.BidiStreamingServer[CreatePersonRequest, Person]
 
 func _PersonService_ListPerson_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Blank)
@@ -224,15 +250,22 @@ var PersonService_ServiceDesc = grpc.ServiceDesc{
 			Handler:       _PersonService_CreatePersonStream_Handler,
 			ClientStreams: true,
 		},
+		{
+			StreamName:    "CreatePersonStreamBidirectional",
+			Handler:       _PersonService_CreatePersonStreamBidirectional_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
 	},
 	Metadata: "proto/person_profession.proto",
 }
 
 const (
-	ProfessionService_CreateProfession_FullMethodName       = "/pb.ProfessionService/CreateProfession"
-	ProfessionService_CreateProfessionStream_FullMethodName = "/pb.ProfessionService/CreateProfessionStream"
-	ProfessionService_ListProfession_FullMethodName         = "/pb.ProfessionService/ListProfession"
-	ProfessionService_GetProfession_FullMethodName          = "/pb.ProfessionService/GetProfession"
+	ProfessionService_CreateProfession_FullMethodName                    = "/pb.ProfessionService/CreateProfession"
+	ProfessionService_CreateProfessionStream_FullMethodName              = "/pb.ProfessionService/CreateProfessionStream"
+	ProfessionService_CreateProfessionStreamBidirectional_FullMethodName = "/pb.ProfessionService/CreateProfessionStreamBidirectional"
+	ProfessionService_ListProfession_FullMethodName                      = "/pb.ProfessionService/ListProfession"
+	ProfessionService_GetProfession_FullMethodName                       = "/pb.ProfessionService/GetProfession"
 )
 
 // ProfessionServiceClient is the client API for ProfessionService service.
@@ -241,6 +274,7 @@ const (
 type ProfessionServiceClient interface {
 	CreateProfession(ctx context.Context, in *CreateProfessionRequest, opts ...grpc.CallOption) (*Profession, error)
 	CreateProfessionStream(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[CreateProfessionRequest, ProfessionList], error)
+	CreateProfessionStreamBidirectional(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[CreateProfessionRequest, Profession], error)
 	ListProfession(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*ProfessionList, error)
 	GetProfession(ctx context.Context, in *ProfessionGetRequest, opts ...grpc.CallOption) (*Profession, error)
 }
@@ -276,6 +310,19 @@ func (c *professionServiceClient) CreateProfessionStream(ctx context.Context, op
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type ProfessionService_CreateProfessionStreamClient = grpc.ClientStreamingClient[CreateProfessionRequest, ProfessionList]
 
+func (c *professionServiceClient) CreateProfessionStreamBidirectional(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[CreateProfessionRequest, Profession], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &ProfessionService_ServiceDesc.Streams[1], ProfessionService_CreateProfessionStreamBidirectional_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[CreateProfessionRequest, Profession]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type ProfessionService_CreateProfessionStreamBidirectionalClient = grpc.BidiStreamingClient[CreateProfessionRequest, Profession]
+
 func (c *professionServiceClient) ListProfession(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*ProfessionList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProfessionList)
@@ -302,6 +349,7 @@ func (c *professionServiceClient) GetProfession(ctx context.Context, in *Profess
 type ProfessionServiceServer interface {
 	CreateProfession(context.Context, *CreateProfessionRequest) (*Profession, error)
 	CreateProfessionStream(grpc.ClientStreamingServer[CreateProfessionRequest, ProfessionList]) error
+	CreateProfessionStreamBidirectional(grpc.BidiStreamingServer[CreateProfessionRequest, Profession]) error
 	ListProfession(context.Context, *Blank) (*ProfessionList, error)
 	GetProfession(context.Context, *ProfessionGetRequest) (*Profession, error)
 	mustEmbedUnimplementedProfessionServiceServer()
@@ -319,6 +367,9 @@ func (UnimplementedProfessionServiceServer) CreateProfession(context.Context, *C
 }
 func (UnimplementedProfessionServiceServer) CreateProfessionStream(grpc.ClientStreamingServer[CreateProfessionRequest, ProfessionList]) error {
 	return status.Errorf(codes.Unimplemented, "method CreateProfessionStream not implemented")
+}
+func (UnimplementedProfessionServiceServer) CreateProfessionStreamBidirectional(grpc.BidiStreamingServer[CreateProfessionRequest, Profession]) error {
+	return status.Errorf(codes.Unimplemented, "method CreateProfessionStreamBidirectional not implemented")
 }
 func (UnimplementedProfessionServiceServer) ListProfession(context.Context, *Blank) (*ProfessionList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListProfession not implemented")
@@ -371,6 +422,13 @@ func _ProfessionService_CreateProfessionStream_Handler(srv interface{}, stream g
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type ProfessionService_CreateProfessionStreamServer = grpc.ClientStreamingServer[CreateProfessionRequest, ProfessionList]
+
+func _ProfessionService_CreateProfessionStreamBidirectional_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ProfessionServiceServer).CreateProfessionStreamBidirectional(&grpc.GenericServerStream[CreateProfessionRequest, Profession]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type ProfessionService_CreateProfessionStreamBidirectionalServer = grpc.BidiStreamingServer[CreateProfessionRequest, Profession]
 
 func _ProfessionService_ListProfession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Blank)
@@ -432,6 +490,12 @@ var ProfessionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "CreateProfessionStream",
 			Handler:       _ProfessionService_CreateProfessionStream_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "CreateProfessionStreamBidirectional",
+			Handler:       _ProfessionService_CreateProfessionStreamBidirectional_Handler,
+			ServerStreams: true,
 			ClientStreams: true,
 		},
 	},

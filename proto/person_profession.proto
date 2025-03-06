@@ -51,6 +51,7 @@ message ProfessionGetRequest {
 service PersonService {
     rpc CreatePerson(CreatePersonRequest) returns (Person) {}
     rpc CreatePersonStream(stream CreatePersonRequest) returns (PersonList) {}
+    rpc CreatePersonStreamBidirectional(stream CreatePersonRequest) returns (stream Person) {}
     rpc ListPerson(blank) returns (PersonList) {}
     rpc GetPerson(PersonGetRequest) returns (Person) {}
 }
@@ -58,6 +59,7 @@ service PersonService {
 service ProfessionService {
     rpc CreateProfession(CreateProfessionRequest) returns (Profession) {}
     rpc CreateProfessionStream(stream CreateProfessionRequest) returns (ProfessionList) {}
+    rpc CreateProfessionStreamBidirectional(stream CreateProfessionRequest) returns (stream Profession) {}
     rpc ListProfession(blank) returns (ProfessionList) {}
     rpc GetProfession(ProfessionGetRequest) returns (Profession) {}
 }
