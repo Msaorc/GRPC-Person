@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"io"
 
 	"github.com/Msaorc/GRPC-Person/internal/database"
 	"github.com/Msaorc/GRPC-Person/internal/pb"
@@ -59,4 +60,28 @@ func (pf *ProfessionService) GetProfession(ctx context.Context, in *pb.Professio
 	}
 
 	return professionResponse, nil
+}
+
+func (pf *ProfessionService) CreateProfessionStream(stream pb.ProfessionService_CreateProfessionStreamServer) error {
+	professions := &pb.ProfessionList{}
+
+	for {
+		profession, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(professions)
+		}
+		if err != nil {
+			return err
+		}
+
+		professionResult, err := pf.ProfessionDB.Create(profession.Description)
+		if err != nil {
+			return err
+		}
+
+		professions.Professions = append(professions.Professions, &pb.Profession{
+			Id:          professionResult.ID,
+			Description: professionResult.Description,
+		})
+	}
 }

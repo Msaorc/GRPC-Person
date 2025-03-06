@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PersonService_CreatePerson_FullMethodName = "/pb.PersonService/CreatePerson"
-	PersonService_ListPerson_FullMethodName   = "/pb.PersonService/ListPerson"
-	PersonService_GetPerson_FullMethodName    = "/pb.PersonService/GetPerson"
+	PersonService_CreatePerson_FullMethodName       = "/pb.PersonService/CreatePerson"
+	PersonService_CreatePersonStream_FullMethodName = "/pb.PersonService/CreatePersonStream"
+	PersonService_ListPerson_FullMethodName         = "/pb.PersonService/ListPerson"
+	PersonService_GetPerson_FullMethodName          = "/pb.PersonService/GetPerson"
 )
 
 // PersonServiceClient is the client API for PersonService service.
@@ -29,6 +30,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PersonServiceClient interface {
 	CreatePerson(ctx context.Context, in *CreatePersonRequest, opts ...grpc.CallOption) (*Person, error)
+	CreatePersonStream(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[CreatePersonRequest, PersonList], error)
 	ListPerson(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*PersonList, error)
 	GetPerson(ctx context.Context, in *PersonGetRequest, opts ...grpc.CallOption) (*Person, error)
 }
@@ -50,6 +52,19 @@ func (c *personServiceClient) CreatePerson(ctx context.Context, in *CreatePerson
 	}
 	return out, nil
 }
+
+func (c *personServiceClient) CreatePersonStream(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[CreatePersonRequest, PersonList], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &PersonService_ServiceDesc.Streams[0], PersonService_CreatePersonStream_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[CreatePersonRequest, PersonList]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type PersonService_CreatePersonStreamClient = grpc.ClientStreamingClient[CreatePersonRequest, PersonList]
 
 func (c *personServiceClient) ListPerson(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*PersonList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -76,6 +91,7 @@ func (c *personServiceClient) GetPerson(ctx context.Context, in *PersonGetReques
 // for forward compatibility.
 type PersonServiceServer interface {
 	CreatePerson(context.Context, *CreatePersonRequest) (*Person, error)
+	CreatePersonStream(grpc.ClientStreamingServer[CreatePersonRequest, PersonList]) error
 	ListPerson(context.Context, *Blank) (*PersonList, error)
 	GetPerson(context.Context, *PersonGetRequest) (*Person, error)
 	mustEmbedUnimplementedPersonServiceServer()
@@ -90,6 +106,9 @@ type UnimplementedPersonServiceServer struct{}
 
 func (UnimplementedPersonServiceServer) CreatePerson(context.Context, *CreatePersonRequest) (*Person, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePerson not implemented")
+}
+func (UnimplementedPersonServiceServer) CreatePersonStream(grpc.ClientStreamingServer[CreatePersonRequest, PersonList]) error {
+	return status.Errorf(codes.Unimplemented, "method CreatePersonStream not implemented")
 }
 func (UnimplementedPersonServiceServer) ListPerson(context.Context, *Blank) (*PersonList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPerson not implemented")
@@ -135,6 +154,13 @@ func _PersonService_CreatePerson_Handler(srv interface{}, ctx context.Context, d
 	}
 	return interceptor(ctx, in, info, handler)
 }
+
+func _PersonService_CreatePersonStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(PersonServiceServer).CreatePersonStream(&grpc.GenericServerStream[CreatePersonRequest, PersonList]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type PersonService_CreatePersonStreamServer = grpc.ClientStreamingServer[CreatePersonRequest, PersonList]
 
 func _PersonService_ListPerson_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Blank)
@@ -192,14 +218,21 @@ var PersonService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PersonService_GetPerson_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "CreatePersonStream",
+			Handler:       _PersonService_CreatePersonStream_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "proto/person_profession.proto",
 }
 
 const (
-	ProfessionService_CreateProfession_FullMethodName = "/pb.ProfessionService/CreateProfession"
-	ProfessionService_ListProfession_FullMethodName   = "/pb.ProfessionService/ListProfession"
-	ProfessionService_GetProfession_FullMethodName    = "/pb.ProfessionService/GetProfession"
+	ProfessionService_CreateProfession_FullMethodName       = "/pb.ProfessionService/CreateProfession"
+	ProfessionService_CreateProfessionStream_FullMethodName = "/pb.ProfessionService/CreateProfessionStream"
+	ProfessionService_ListProfession_FullMethodName         = "/pb.ProfessionService/ListProfession"
+	ProfessionService_GetProfession_FullMethodName          = "/pb.ProfessionService/GetProfession"
 )
 
 // ProfessionServiceClient is the client API for ProfessionService service.
@@ -207,6 +240,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProfessionServiceClient interface {
 	CreateProfession(ctx context.Context, in *CreateProfessionRequest, opts ...grpc.CallOption) (*Profession, error)
+	CreateProfessionStream(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[CreateProfessionRequest, ProfessionList], error)
 	ListProfession(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*ProfessionList, error)
 	GetProfession(ctx context.Context, in *ProfessionGetRequest, opts ...grpc.CallOption) (*Profession, error)
 }
@@ -228,6 +262,19 @@ func (c *professionServiceClient) CreateProfession(ctx context.Context, in *Crea
 	}
 	return out, nil
 }
+
+func (c *professionServiceClient) CreateProfessionStream(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[CreateProfessionRequest, ProfessionList], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &ProfessionService_ServiceDesc.Streams[0], ProfessionService_CreateProfessionStream_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[CreateProfessionRequest, ProfessionList]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type ProfessionService_CreateProfessionStreamClient = grpc.ClientStreamingClient[CreateProfessionRequest, ProfessionList]
 
 func (c *professionServiceClient) ListProfession(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*ProfessionList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -254,6 +301,7 @@ func (c *professionServiceClient) GetProfession(ctx context.Context, in *Profess
 // for forward compatibility.
 type ProfessionServiceServer interface {
 	CreateProfession(context.Context, *CreateProfessionRequest) (*Profession, error)
+	CreateProfessionStream(grpc.ClientStreamingServer[CreateProfessionRequest, ProfessionList]) error
 	ListProfession(context.Context, *Blank) (*ProfessionList, error)
 	GetProfession(context.Context, *ProfessionGetRequest) (*Profession, error)
 	mustEmbedUnimplementedProfessionServiceServer()
@@ -268,6 +316,9 @@ type UnimplementedProfessionServiceServer struct{}
 
 func (UnimplementedProfessionServiceServer) CreateProfession(context.Context, *CreateProfessionRequest) (*Profession, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProfession not implemented")
+}
+func (UnimplementedProfessionServiceServer) CreateProfessionStream(grpc.ClientStreamingServer[CreateProfessionRequest, ProfessionList]) error {
+	return status.Errorf(codes.Unimplemented, "method CreateProfessionStream not implemented")
 }
 func (UnimplementedProfessionServiceServer) ListProfession(context.Context, *Blank) (*ProfessionList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListProfession not implemented")
@@ -313,6 +364,13 @@ func _ProfessionService_CreateProfession_Handler(srv interface{}, ctx context.Co
 	}
 	return interceptor(ctx, in, info, handler)
 }
+
+func _ProfessionService_CreateProfessionStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ProfessionServiceServer).CreateProfessionStream(&grpc.GenericServerStream[CreateProfessionRequest, ProfessionList]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type ProfessionService_CreateProfessionStreamServer = grpc.ClientStreamingServer[CreateProfessionRequest, ProfessionList]
 
 func _ProfessionService_ListProfession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Blank)
@@ -370,6 +428,12 @@ var ProfessionService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ProfessionService_GetProfession_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "CreateProfessionStream",
+			Handler:       _ProfessionService_CreateProfessionStream_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "proto/person_profession.proto",
 }

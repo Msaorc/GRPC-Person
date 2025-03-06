@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"io"
 
 	"github.com/Msaorc/GRPC-Person/internal/database"
 	"github.com/Msaorc/GRPC-Person/internal/pb"
@@ -62,4 +63,29 @@ func (p *PersonService) GetPerson(ctx context.Context, in *pb.PersonGetRequest) 
 	}
 
 	return personResponse, nil
+}
+
+func (p *PersonService) CreatePersonStream(stream pb.PersonService_CreatePersonStreamServer) error {
+	people := &pb.PersonList{}
+
+	for {
+		person, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(people)
+		}
+		if err != nil {
+			return err
+		}
+
+		personResult, err := p.PersonDB.Create(person.Name, person.Year)
+		if err != nil {
+			return err
+		}
+
+		people.People = append(people.People, &pb.Person{
+			Id:   personResult.ID,
+			Name: personResult.Name,
+			Year: person.Year,
+		})
+	}
 }
